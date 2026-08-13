@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hải Phòng Công Dân Số | Hải Phòng Quiz</title>
+<meta name="description" content="Hành trình số khám phá lịch sử và địa lý Hải Phòng — trở thành Công Dân Số Hải Phòng xuất sắc.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='38' r='7' fill='%23E8A33D'/%3E%3Cg fill='%23D9412E'%3E%3Cellipse cx='50' cy='20' rx='9' ry='16'/%3E%3Cellipse cx='68' cy='32' rx='9' ry='16' transform='rotate(72 68 32)'/%3E%3Cellipse cx='61' cy='53' rx='9' ry='16' transform='rotate(144 61 53)'/%3E%3Cellipse cx='39' cy='53' rx='9' ry='16' transform='rotate(216 39 53)'/%3E%3Cellipse cx='32' cy='32' rx='9' ry='16' transform='rotate(288 32 32)'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ============ THANH ĐIỀU HƯỚNG ============ -->
+<header class="navbar" id="navbar">
+  <div class="navbar-inner">
+    <a href="#" class="navbar-logo" id="nav-logo" data-nav="home">
+      <span class="flower-icon" aria-hidden="true">
+        <svg viewBox="0 0 100 100"><circle cx="50" cy="38" r="7" class="flower-core"/><g class="flower-petals"><ellipse cx="50" cy="20" rx="9" ry="16"/><ellipse cx="68" cy="32" rx="9" ry="16" transform="rotate(72 68 32)"/><ellipse cx="61" cy="53" rx="9" ry="16" transform="rotate(144 61 53)"/><ellipse cx="39" cy="53" rx="9" ry="16" transform="rotate(216 39 53)"/><ellipse cx="32" cy="32" rx="9" ry="16" transform="rotate(288 32 32)"/></g></svg>
+      </span>
+      <span class="navbar-title">HẢI PHÒNG<br><small>CÔNG DÂN SỐ</small></span>
+    </a>
+    <nav class="navbar-menu">
+      <button type="button" class="navbar-link" data-nav="home">Trang chủ</button>
+      <button type="button" class="navbar-link" data-nav="explore">Khám phá</button>
+      <button type="button" class="navbar-link" data-nav="contests">Cuộc thi</button>
+      <button type="button" class="navbar-link" data-nav="leaderboard">Bảng xếp hạng</button>
+      <button type="button" class="navbar-link" data-nav="profile">Tủ thành tích</button>
+    </nav>
+    <div class="navbar-right">
+      <button type="button" class="btn-guide-icon" id="btn-guide-nav" title="Hướng dẫn chơi" aria-label="Hướng dẫn chơi">❓</button>
+      <div class="navbar-score" id="navbar-score" hidden>
+        <span class="score-chip">⭐ <span id="score-value">0</span> điểm</span>
+        <span class="score-chip" id="progress-chip">0/10</span>
+      </div>
+      <div class="navbar-user" id="navbar-user" hidden>
+        <button type="button" class="user-chip-btn" id="btn-user-profile" data-nav="profile">
+          <img id="user-avatar" class="user-avatar" alt="" referrerpolicy="no-referrer">
+          <span id="user-name" class="user-name"></span>
+        </button>
+        <button type="button" id="btn-signout" class="btn-signout" title="Đăng xuất">⏻</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<!-- ============ MÀN HÌNH 0: ĐĂNG NHẬP ============ -->
+<section id="screen-login" class="screen is-active">
+  <div class="login-wrap">
+    <svg class="login-decor login-decor-a" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="38" r="7" class="flower-core"/><g class="flower-petals"><ellipse cx="50" cy="20" rx="9" ry="16"/><ellipse cx="68" cy="32" rx="9" ry="16" transform="rotate(72 68 32)"/><ellipse cx="61" cy="53" rx="9" ry="16" transform="rotate(144 61 53)"/><ellipse cx="39" cy="53" rx="9" ry="16" transform="rotate(216 39 53)"/><ellipse cx="32" cy="32" rx="9" ry="16" transform="rotate(288 32 32)"/></g></svg>
+    <svg class="login-decor login-decor-b" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="38" r="7" class="flower-core"/><g class="flower-petals"><ellipse cx="50" cy="20" rx="9" ry="16"/><ellipse cx="68" cy="32" rx="9" ry="16" transform="rotate(72 68 32)"/><ellipse cx="61" cy="53" rx="9" ry="16" transform="rotate(144 61 53)"/><ellipse cx="39" cy="53" rx="9" ry="16" transform="rotate(216 39 53)"/><ellipse cx="32" cy="32" rx="9" ry="16" transform="rotate(288 32 32)"/></g></svg>
+    <div class="login-card">
+      <span class="flower-icon login-logo" aria-hidden="true">
+        <svg viewBox="0 0 100 100"><circle cx="50" cy="38" r="7" class="flower-core"/><g class="flower-petals"><ellipse cx="50" cy="20" rx="9" ry="16"/><ellipse cx="68" cy="32" rx="9" ry="16" transform="rotate(72 68 32)"/><ellipse cx="61" cy="53" rx="9" ry="16" transform="rotate(144 61 53)"/><ellipse cx="39" cy="53" rx="9" ry="16" transform="rotate(216 39 53)"/><ellipse cx="32" cy="32" rx="9" ry="16" transform="rotate(288 32 32)"/></g></svg>
+      </span>
+      <h1 class="login-title">HẢI PHÒNG<br>CÔNG DÂN SỐ</h1>
+      <p class="login-sub">Đăng nhập bằng tài khoản Gmail để bắt đầu hành trình khám phá và lưu lại tiến trình của riêng bạn.</p>
+      <button type="button" class="btn btn-google" id="btn-google-signin">
+        <svg viewBox="0 0 48 48" class="google-g"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.6 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.1 8 3l6-6C34.6 5.1 29.6 3 24 3 12.4 3 3 12.4 3 24s9.4 21 21 21 21-9.4 21-21c0-1.2-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 15.9 18.9 13 24 13c3.1 0 5.8 1.1 8 3l6-6C34.6 5.1 29.6 3 24 3 16.3 3 9.6 7.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 45c5.5 0 10.4-1.9 14.2-5.1l-6.6-5.4C29.6 36.2 26.9 37 24 37c-5.3 0-9.7-3.4-11.3-8.1l-6.6 5.1C9.5 40.6 16.2 45 24 45z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.3 4.3-4.2 5.7l6.6 5.4C41.6 36 45 30.5 45 24c0-1.2-.1-2.4-.4-3.5z"/></svg>
+        Đăng nhập bằng Google
+      </button>
+      <p class="login-error" id="login-error" hidden></p>
+      <p class="login-note">Không cần tạo mật khẩu riêng — tiến trình của bạn được lưu an toàn theo tài khoản.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MÀN HÌNH 1: TRANG CHỦ ============ -->
+<section id="screen-home" class="screen">
+  <div class="hero">
+    <div class="hero-decor hero-decor-flower" aria-hidden="true">
+      <svg viewBox="0 0 100 100"><circle cx="50" cy="38" r="7" class="flower-core"/><g class="flower-petals"><ellipse cx="50" cy="20" rx="9" ry="16"/><ellipse cx="68" cy="32" rx="9" ry="16" transform="rotate(72 68 32)"/><ellipse cx="61" cy="53" rx="9" ry="16" transform="rotate(144 61 53)"/><ellipse cx="39" cy="53" rx="9" ry="16" transform="rotate(216 39 53)"/><ellipse cx="32" cy="32" rx="9" ry="16" transform="rotate(288 32 32)"/></g></svg>
+    </div>
+    <div class="hero-inner">
+      <div class="hero-text">
+        <p class="hero-kicker">Hành trình số khám phá quê hương</p>
+        <h1 class="hero-title">HẢI PHÒNG<br>CÔNG DÂN SỐ</h1>
+        <p class="hero-sub">Hải Phòng Quiz — đi qua từng địa danh nổi tiếng của Thành phố Cảng trên bản đồ số, tìm hiểu lịch sử &amp; địa lý, trả lời thử thách và trở thành <strong>Công dân số Hải Phòng xuất sắc</strong>.</p>
+        <div class="hero-actions">
+          <button type="button" class="btn btn-primary" id="btn-start" data-nav="explore">BẮT ĐẦU KHÁM PHÁ →</button>
+          <button type="button" class="btn btn-outline" id="btn-guide-hero">XEM HƯỚNG DẪN</button>
+        </div>
+      </div>
+      <div class="hero-art" aria-hidden="true">
+        <svg viewBox="0 0 340 300" class="hero-svg">
+          <path d="M0 230 Q 85 200 170 230 T 340 230 V300 H0 Z" class="art-sea-dark"/>
+          <path d="M0 250 Q 85 225 170 250 T 340 250 V300 H0 Z" class="art-sea-light"/>
+          <g class="art-bridge">
+            <path d="M40 220 V150 M300 220 V150" class="art-bridge-tower"/>
+            <path d="M20 150 Q170 90 320 150" class="art-bridge-cable"/>
+            <path d="M20 220 H320" class="art-bridge-deck"/>
+            <path d="M60 150 L40 220 M100 150 L60 220 M140 150 L90 220 M200 150 L250 220 M240 150 L280 220 M280 150 L300 220" class="art-bridge-cable-thin"/>
+          </g>
+          <g class="art-boat">
+            <path d="M225 205 L275 205 L265 222 L235 222 Z" class="art-boat-hull"/>
+            <path d="M250 175 V205 M250 180 L268 195 L250 200 Z" class="art-boat-sail"/>
+          </g>
+          <g class="art-flower art-flower-1"><circle cx="0" cy="-10" r="5" class="flower-core"/><g class="flower-petals"><ellipse cx="0" cy="-22" rx="5" ry="9"/><ellipse cx="10" cy="-16" rx="5" ry="9" transform="rotate(72 10 -16)"/><ellipse cx="6" cy="-3" rx="5" ry="9" transform="rotate(144 6 -3)"/><ellipse cx="-6" cy="-3" rx="5" ry="9" transform="rotate(216 -6 -3)"/><ellipse cx="-10" cy="-16" rx="5" ry="9" transform="rotate(288 -10 -16)"/></g></g>
+        </svg>
+      </div>
+    </div>
+    <svg class="wave-divider" viewBox="0 0 1200 60" preserveAspectRatio="none" aria-hidden="true"><path d="M0 30 Q150 0 300 30 T600 30 T900 30 T1200 30 V60 H0 Z"></path></svg>
+  </div>
+
+  <footer class="site-footer">Dự án dự thi Sáng tạo Thanh thiếu niên, Nhi đồng — Hải Phòng Quiz: Hành trình số khám phá lịch sử &amp; địa lý quê hương.</footer>
+</section>
+
+<!-- ============ MÀN HÌNH: KHÁM PHÁ (3 HÀNH TRÌNH) ============ -->
+<section id="screen-explore" class="screen">
+  <div class="explore-wrap">
+    <h1 class="explore-title">Khám phá Hải Phòng</h1>
+    <p class="explore-sub">Chọn một hành trình bản đồ số để bắt đầu khám phá.</p>
+    <div class="explore-grid">
+      <button type="button" class="explore-card" data-nav="map">
+        <span class="explore-card-icon" aria-hidden="true">🏯</span>
+        <h2>Địa danh lịch sử</h2>
+        <p>10 điểm dừng lịch sử nổi bật, trả lời thử thách và nhận tem di sản số.</p>
+      </button>
+      <button type="button" class="explore-card" data-nav="map-culture">
+        <span class="explore-card-icon" aria-hidden="true">🎎</span>
+        <h2>Lễ hội văn hoá</h2>
+        <p>Bản đồ số các lễ hội truyền thống tiêu biểu của thành phố Cảng.</p>
+      </button>
+      <button type="button" class="explore-card" data-nav="soon" data-soon-title="Food tour Hải Phòng" data-soon-text="Hành trình khám phá món ăn nổi tiếng Hải Phòng đang được xây dựng.">
+        <span class="explore-card-icon" aria-hidden="true">🍜</span>
+        <h2>Food tour</h2>
+        <p>Hành trình khám phá những món ăn nổi tiếng của Hải Phòng.</p>
+        <span class="explore-card-badge">Sắp ra mắt</span>
+      </button>
+    </div>
+
+    <p class="explore-info-label">Cách hoạt động</p>
+    <div class="home-info">
+      <div class="info-card">
+        <h2>3 hành trình bản đồ số</h2>
+        <p>Địa danh lịch sử (10 điểm dừng), Lễ hội văn hoá (10 lễ hội tiêu biểu) và Food tour (sắp ra mắt) — mỗi hành trình một bản đồ riêng.</p>
+      </div>
+      <div class="info-card">
+        <h2>Trả lời — Ghi điểm</h2>
+        <p>Mỗi điểm dừng có câu hỏi ngẫu nhiên (trắc nghiệm, đoán ảnh mờ, sắp xếp mốc thời gian...). Trả lời đúng để cộng điểm hoặc ghi nhận khám phá.</p>
+      </div>
+      <div class="info-card">
+        <h2>Nhận tem &amp; chứng nhận</h2>
+        <p>Hoàn thành hành trình Địa danh lịch sử để nhận huy hiệu Đồng — Bạc — Vàng và chứng nhận "Công dân số Hải Phòng".</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MÀN HÌNH: SẮP RA MẮT (dùng chung cho các hành trình chưa hoàn thiện) ============ -->
+<section id="screen-soon" class="screen">
+  <div class="soon-wrap">
+    <span class="soon-icon" aria-hidden="true">🚧</span>
+    <h2 id="soon-title">Sắp ra mắt</h2>
+    <p id="soon-text">Nội dung đang được xây dựng.</p>
+    <button type="button" class="btn btn-outline" data-nav="explore">‹ Quay lại Khám phá</button>
+  </div>
+</section>
+
+<!-- ============ MÀN HÌNH 2: BẢN ĐỒ LỊCH SỬ ============ -->
+<section id="screen-map" class="screen">
+  <div class="map-layout">
+    <div class="map-area">
+      <button type="button" class="map-back-link" data-nav="explore">‹ Khám phá</button>
+      <button type="button" class="map-reset-link" id="map-reset">⤢ Xem toàn bộ</button>
+      <div class="map-canvas" id="map-canvas"></div>
+    </div>
+    <aside class="map-sidebar">
+      <h2 class="sidebar-title">Hành trình của bạn</h2>
+      <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+      <p class="progress-label"><span id="progress-count">0</span>/10 điểm dừng đã hoàn thành</p>
+      <ul class="stop-list" id="stop-list"></ul>
+    </aside>
+  </div>
+</section>
+
+<!-- ============ MÀN HÌNH: BẢN ĐỒ VĂN HOÁ (LỄ HỘI) ============ -->
+<section id="screen-map-culture" class="screen">
+  <div class="map-layout">
+    <div class="map-area">
+      <button type="button" class="map-back-link" data-nav="explore">‹ Khám phá</button>
+      <button type="button" class="map-reset-link" id="map-culture-reset">⤢ Xem toàn bộ</button>
+      <div class="map-canvas" id="map-canvas-culture"></div>
+    </div>
+    <aside class="map-sidebar">
+      <h2 class="sidebar-title">Lễ hội văn hoá Hải Phòng</h2>
+      <p class="progress-label">10 lễ hội tiêu biểu — bấm vào từng điểm để tìm hiểu</p>
+      <ul class="stop-list" id="festival-list"></ul>
+    </aside>
+  </div>
+</section>
+
+<!-- ============ MÀN HÌNH 3: KẾT QUẢ ============ -->
+<section id="screen-result" class="screen">
+  <div class="result-wrap">
+    <svg class="result-flower result-flower-a" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="38" r="7" class="flower-core"/><g class="flower-petals"><ellipse cx="50" cy="20" rx="9" ry="16"/><ellipse cx="68" cy="32" rx="9" ry="16" transform="rotate(72 68 32)"/><ellipse cx="61" cy="53" rx="9" ry="16" transform="rotate(144 61 53)"/><ellipse cx="39" cy="53" rx="9" ry="16" transform="rotate(216 39 53)"/><ellipse cx="32" cy="32" rx="9" ry="16" transform="rotate(288 32 32)"/></g></svg>
+    <svg class="result-flower result-flower-b" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="38" r="7" class="flower-core"/><g class="flower-petals"><ellipse cx="50" cy="20" rx="9" ry="16"/><ellipse cx="68" cy="32" rx="9" ry="16" transform="rotate(72 68 32)"/><ellipse cx="61" cy="53" rx="9" ry="16" transform="rotate(144 61 53)"/><ellipse cx="39" cy="53" rx="9" ry="16" transform="rotate(216 39 53)"/><ellipse cx="32" cy="32" rx="9" ry="16" transform="rotate(288 32 32)"/></g></svg>
+
+    <div class="result-card">
+      <div class="result-badge" id="result-badge">
+        <svg viewBox="0 0 100 100"><polygon points="50,4 61,37 96,37 68,58 79,92 50,71 21,92 32,58 4,37 39,37" class="badge-star"/></svg>
+        <span class="result-badge-score" id="result-badge-score">0</span>
+      </div>
+      <p class="result-score-line"><span id="result-score">0</span> / <span id="result-max">6</span> điểm</p>
+      <div class="result-rank" id="result-rank">Người mới khám phá</div>
+
+      <div class="medal-row">
+        <div class="medal medal-bronze" data-medal="bronze"><div class="medal-circle">🥉</div><span>Đồng</span></div>
+        <div class="medal medal-silver" data-medal="silver"><div class="medal-circle">🥈</div><span>Bạc</span></div>
+        <div class="medal medal-gold" data-medal="gold"><div class="medal-circle">🥇</div><span>Vàng</span></div>
+      </div>
+
+      <div class="result-actions">
+        <button type="button" class="btn btn-outline" id="btn-back-to-map">Quay lại bản đồ</button>
+        <button type="button" class="btn btn-primary" id="btn-replay">Chơi lại</button>
+      </div>
+      <button type="button" class="btn btn-cert" id="btn-certificate">📜 Xuất chứng nhận PDF có mã QR</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MÀN HÌNH: CUỘC THI ============ -->
+<section id="screen-contests" class="screen">
+  <div class="contests-wrap">
+    <h2 class="contests-title">🏆 Cuộc thi</h2>
+    <p class="contests-sub">Danh sách cuộc thi sắp diễn ra và đã diễn ra. Đây là trang định hướng phát triển — nội dung chi tiết từng cuộc thi sẽ được cập nhật sau.</p>
+
+    <h3 class="contests-group-title">Sắp diễn ra</h3>
+    <div class="contest-list">
+      <div class="contest-card is-upcoming">
+        <div class="contest-card-date">
+          <span class="contest-card-day">20</span>
+          <span class="contest-card-month">Th.09</span>
+        </div>
+        <div class="contest-card-body">
+          <span class="contest-card-status status-upcoming">Sắp mở đăng ký</span>
+          <h4>Cuộc thi "Công dân số Hải Phòng" — Mùa 2</h4>
+          <p>Vòng thi kiến thức lịch sử, văn hoá &amp; ẩm thực thành phố, dành cho học sinh THCS toàn thành phố.</p>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="contests-group-title">Đã diễn ra</h3>
+    <div class="contest-list">
+      <div class="contest-card is-past">
+        <div class="contest-card-date">
+          <span class="contest-card-day">12</span>
+          <span class="contest-card-month">Th.08</span>
+        </div>
+        <div class="contest-card-body">
+          <span class="contest-card-status status-past">Đã kết thúc</span>
+          <h4>Cuộc thi "Công dân số Hải Phòng" — Mùa 1</h4>
+          <p>Ra mắt hành trình khám phá 10 địa danh lịch sử đầu tiên trên bản đồ số.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MÀN HÌNH: BẢNG XẾP HẠNG ============ -->
+<section id="screen-leaderboard" class="screen">
+  <div class="leaderboard-wrap">
+    <h2 class="leaderboard-title">🏆 Bảng xếp hạng Công Dân Số Hải Phòng</h2>
+
+    <div class="info-view-switch">
+      <button type="button" class="info-view-btn is-active" data-lb-view="explore" id="lb-tab-explore">🗺️ Theo hành trình khám phá</button>
+      <button type="button" class="info-view-btn" data-lb-view="contest" id="lb-tab-contest">🏅 Theo cuộc thi</button>
+    </div>
+
+    <div id="lb-view-explore">
+      <input type="text" id="leaderboard-filter" class="leaderboard-filter-input" placeholder="Lọc theo lớp hoặc trường...">
+      <div class="leaderboard-list" id="leaderboard-list">
+        <p class="leaderboard-loading">Đang tải...</p>
+      </div>
+    </div>
+
+    <div id="lb-view-contest" hidden>
+      <p class="leaderboard-contest-placeholder">🏆 Bảng xếp hạng của Cuộc thi "Công dân số Hải Phòng" sẽ được cập nhật tại đây sau khi cuộc thi diễn ra. Theo dõi mục <strong>Cuộc thi</strong> để không bỏ lỡ lịch thi nhé!</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MÀN HÌNH: TRANG CÁ NHÂN ============ -->
+<section id="screen-profile" class="screen">
+  <div class="profile-wrap">
+    <div class="profile-header">
+      <img class="profile-avatar" id="profile-avatar-img" alt="" referrerpolicy="no-referrer">
+      <div>
+        <h2 id="profile-display-name">Tên học sinh</h2>
+        <p id="profile-meta">Lớp — Trường</p>
+      </div>
+    </div>
+
+    <div class="profile-stats">
+      <div class="profile-stat"><span id="profile-stat-score">0</span><small>Điểm hiện tại</small></div>
+      <div class="profile-stat"><span id="profile-stat-stops">0/10</span><small>Điểm dừng</small></div>
+      <div class="profile-stat"><span id="profile-stat-best">0</span><small>Điểm cao nhất</small></div>
+    </div>
+
+    <h3 class="profile-section-title">🎖️ Tủ tem di sản</h3>
+
+    <div class="journey-stamp-group">
+      <div class="journey-stamp-head">
+        <p class="journey-stamp-group-title">🏯 Địa danh lịch sử</p>
+        <span class="journey-stamp-count" id="stamp-count-locations">0/10</span>
+      </div>
+      <div class="stamp-album" id="stamp-album-locations"></div>
+      <button type="button" class="btn btn-cert journey-cert-btn" id="btn-certificate-locations" disabled>📜 Chứng nhận Địa danh lịch sử</button>
+    </div>
+
+    <div class="journey-stamp-group">
+      <div class="journey-stamp-head">
+        <p class="journey-stamp-group-title">🎎 Lễ hội văn hoá</p>
+        <span class="journey-stamp-count" id="stamp-count-festivals">0/10</span>
+      </div>
+      <div class="stamp-album" id="stamp-album-festivals"></div>
+      <button type="button" class="btn btn-cert journey-cert-btn" id="btn-certificate-festivals" disabled>📜 Chứng nhận Lễ hội văn hoá</button>
+    </div>
+
+    <div class="journey-stamp-group is-locked">
+      <div class="journey-stamp-head">
+        <p class="journey-stamp-group-title">🍜 Food tour</p>
+        <span class="journey-stamp-count">Sắp ra mắt</span>
+      </div>
+      <p class="journey-stamp-locked-note">Hành trình Food tour đang được xây dựng — tem của hành trình này sẽ xuất hiện tại đây khi ra mắt.</p>
+    </div>
+
+    <button type="button" class="btn btn-primary journey-cert-btn is-combined" id="btn-certificate-combined" disabled>🏆 Chứng nhận Công dân số Hải Phòng — hoàn thành cả 3 hành trình</button>
+
+    <h3 class="profile-section-title">🏅 Giải thưởng cuộc thi</h3>
+    <div class="contest-awards" id="contest-awards">
+      <p class="contest-awards-empty">Chưa có giải thưởng nào — hãy tham gia Cuộc thi "Công dân số Hải Phòng" để nhận giải thưởng đầu tiên nhé!</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ============ LỚP PHỦ: MODAL THÔNG TIN ĐỊA DANH ============ -->
+<div class="overlay" id="modal-info" hidden>
+  <div class="modal-card modal-info-card" role="dialog" aria-modal="true" aria-labelledby="info-title">
+    <button type="button" class="modal-close" id="info-close" aria-label="Đóng">✕</button>
+    <div class="modal-info-media" id="info-media"></div>
+    <div class="modal-info-body">
+      <h2 class="modal-info-title" id="info-title">Tên địa danh</h2>
+
+      <div class="info-view-switch">
+        <button type="button" class="info-view-btn is-active" data-view="narration" id="view-btn-narration">📖 Thông tin</button>
+        <button type="button" class="info-view-btn" data-view="chat" id="view-btn-chat">💬 Trò chuyện với hướng dẫn viên</button>
+      </div>
+
+      <div class="info-view-stack">
+        <div class="info-view-panel" id="view-narration">
+          <div class="modal-info-text" id="info-text">Nội dung giới thiệu...</div>
+          <button type="button" class="btn btn-icon" id="info-speak" title="Nghe thuyết minh" aria-label="Nghe thuyết minh">🔊 Nghe phần này</button>
+        </div>
+
+        <div class="info-view-panel" id="view-chat">
+          <div class="chat-thread" id="chat-thread"></div>
+          <div class="chat-options" id="chat-options"></div>
+        </div>
+      </div>
+
+      <div class="modal-info-actions">
+        <button type="button" class="btn btn-primary" id="info-start-quiz">Bắt đầu thử thách →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ LỚP PHỦ: MODAL CÂU HỎI ============ -->
+<div class="overlay" id="modal-quiz" hidden>
+  <div class="modal-card modal-quiz-card" role="dialog" aria-modal="true" aria-labelledby="quiz-location-name">
+    <button type="button" class="modal-close" id="quiz-close" aria-label="Đóng">✕</button>
+    <div class="quiz-head">
+      <div class="quiz-dots" id="quiz-dots"></div>
+      <div class="quiz-score">⭐ <span id="quiz-score">0</span></div>
+    </div>
+    <p class="quiz-location-name" id="quiz-location-name">Tên địa danh</p>
+    <p class="quiz-progress-label" id="quiz-progress-label">Câu 1/5</p>
+
+    <div class="quiz-blur-wrap" id="quiz-blur-wrap" hidden>
+      <div class="quiz-blur-image" id="quiz-blur-image"></div>
+      <button type="button" class="btn btn-icon quiz-blur-btn" id="quiz-blur-btn">🔍 Làm rõ thêm</button>
+    </div>
+
+    <div class="quiz-question-box" id="quiz-question-box">
+      <p class="quiz-question" id="quiz-question">Câu hỏi?</p>
+    </div>
+    <div class="quiz-options" id="quiz-options"></div>
+
+    <div class="quiz-timeline-wrap" id="quiz-timeline-wrap" hidden>
+      <p class="quiz-timeline-hint">Bấm các sự kiện theo đúng thứ tự thời gian, từ sớm nhất đến muộn nhất:</p>
+      <div class="timeline-cards" id="timeline-cards"></div>
+      <p class="timeline-slots-label">Thứ tự bạn đã chọn:</p>
+      <div class="timeline-slots" id="timeline-slots"></div>
+      <div class="timeline-actions">
+        <button type="button" class="btn btn-outline timeline-redo-btn" id="timeline-redo">↺ Chọn lại</button>
+        <button type="button" class="btn btn-primary" id="timeline-check" disabled>Kiểm tra thứ tự</button>
+      </div>
+    </div>
+
+    <p class="quiz-feedback" id="quiz-feedback" hidden></p>
+    <button type="button" class="btn btn-primary quiz-next-btn" id="quiz-next" hidden>Đóng</button>
+  </div>
+</div>
+
+<!-- ============ LỚP PHỦ: MODAL THÔNG TIN LỄ HỘI ============ -->
+<div class="overlay" id="modal-festival" hidden>
+  <div class="modal-card modal-info-card modal-festival-card" role="dialog" aria-modal="true" aria-labelledby="festival-title">
+    <button type="button" class="modal-close" id="festival-close" aria-label="Đóng">✕</button>
+    <div class="modal-info-media" id="festival-media"></div>
+    <div class="modal-info-body">
+      <h2 class="modal-info-title" id="festival-title">Tên lễ hội</h2>
+      <div class="festival-meta">
+        <span class="festival-meta-chip">📍 <span id="festival-place"></span></span>
+        <span class="festival-meta-chip">🗓️ <span id="festival-timing"></span></span>
+      </div>
+
+      <div class="info-view-switch">
+        <button type="button" class="info-view-btn is-active" data-view="narration" id="festival-view-btn-narration">📖 Thông tin</button>
+        <button type="button" class="info-view-btn" data-view="chat" id="festival-view-btn-chat">💬 Trò chuyện với hướng dẫn viên</button>
+      </div>
+
+      <div class="info-view-stack">
+        <div class="info-view-panel" id="festival-view-narration">
+          <div class="modal-info-text" id="festival-text">Nội dung giới thiệu...</div>
+          <button type="button" class="btn btn-icon" id="festival-speak" title="Nghe thuyết minh" aria-label="Nghe thuyết minh">🔊 Nghe phần này</button>
+        </div>
+
+        <div class="info-view-panel" id="festival-view-chat">
+          <div class="chat-thread" id="festival-chat-thread"></div>
+          <div class="chat-options" id="festival-chat-options"></div>
+        </div>
+      </div>
+
+      <div class="modal-info-actions">
+        <button type="button" class="btn btn-primary" id="festival-start-quiz">Thử thách nhanh →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ LỚP PHỦ: MODAL CÂU HỎI LỄ HỘI ============ -->
+<div class="overlay" id="modal-festival-quiz" hidden>
+  <div class="modal-card modal-quiz-card" role="dialog" aria-modal="true" aria-labelledby="festival-quiz-name">
+    <button type="button" class="modal-close" id="festival-quiz-close" aria-label="Đóng">✕</button>
+    <div class="quiz-head">
+      <div class="quiz-dots" id="festival-quiz-dots"></div>
+      <div class="quiz-score">⭐ <span id="festival-quiz-score">0</span></div>
+    </div>
+    <p class="quiz-location-name" id="festival-quiz-name">Tên lễ hội</p>
+    <p class="quiz-progress-label" id="festival-quiz-progress-label">Câu 1/5</p>
+
+    <div class="quiz-question-box" id="festival-quiz-question-box">
+      <p class="quiz-question" id="festival-quiz-question">Câu hỏi?</p>
+    </div>
+    <div class="quiz-options" id="festival-quiz-options"></div>
+
+    <p class="quiz-feedback" id="festival-quiz-feedback" hidden></p>
+    <button type="button" class="btn btn-primary quiz-next-btn" id="festival-quiz-next" hidden>Đóng</button>
+  </div>
+</div>
+
+<!-- ============ LỚP PHỦ: CHÚC MỪNG — TEM DI SẢN & CHECK-IN ============ -->
+<div class="overlay" id="modal-stamp" hidden>
+  <div class="modal-card modal-stamp-card" role="dialog" aria-modal="true" aria-labelledby="stamp-title">
+    <h2 id="stamp-title">🎉 Chúc mừng!</h2>
+    <p class="stamp-sub">Bạn vừa nhận được một tem di sản số</p>
+    <div class="stamp-badge" id="stamp-badge"></div>
+    <p class="stamp-location-name" id="stamp-location-name">Tên địa danh</p>
+
+    <div class="checkin-block">
+      <p class="checkin-label">Check-in cảm xúc của bạn tại đây:</p>
+      <div class="checkin-emojis" id="checkin-emojis">
+        <button type="button" class="checkin-emoji-btn" data-emoji="😍">😍</button>
+        <button type="button" class="checkin-emoji-btn" data-emoji="🤩">🤩</button>
+        <button type="button" class="checkin-emoji-btn" data-emoji="❤️">❤️</button>
+        <button type="button" class="checkin-emoji-btn" data-emoji="🧡">🧡</button>
+      </div>
+      <input type="text" id="checkin-note" class="checkin-note-input" maxlength="80" placeholder="Viết một câu cảm nghĩ ngắn (không bắt buộc)...">
+
+      <label class="checkin-photo-label" for="checkin-photo-input">📷 Thêm ảnh check-in (không bắt buộc)</label>
+      <div class="checkin-photo-actions">
+        <input type="file" accept="image/*" id="checkin-photo-input" class="checkin-photo-input">
+        <button type="button" class="btn btn-outline checkin-avatar-btn" id="checkin-use-avatar">🙂 Dùng ảnh đại diện</button>
+      </div>
+      <div class="checkin-photo-preview" id="checkin-photo-preview" hidden>
+        <img id="checkin-photo-preview-img" alt="Ảnh check-in vừa chọn">
+        <button type="button" class="checkin-photo-remove" id="checkin-photo-remove" aria-label="Xoá ảnh">✕</button>
+      </div>
+    </div>
+
+    <button type="button" class="btn btn-primary stamp-continue-btn" id="stamp-continue">Tiếp tục hành trình →</button>
+  </div>
+</div>
+
+<!-- ============ LỚP PHỦ: XEM LẠI CHECK-IN CỦA 1 TEM ============ -->
+<div class="overlay" id="modal-checkin-view" hidden>
+  <div class="modal-card modal-checkin-view-card" role="dialog" aria-modal="true" aria-labelledby="checkin-view-title">
+    <button type="button" class="modal-close" id="checkin-view-close" aria-label="Đóng">✕</button>
+    <div class="checkin-view-photo-wrap" id="checkin-view-photo-wrap">
+      <img id="checkin-view-photo" alt="Ảnh check-in">
+      <span class="checkin-view-emoji" id="checkin-view-emoji"></span>
+    </div>
+    <h3 id="checkin-view-title">Tên điểm dừng</h3>
+    <p class="checkin-view-meta" id="checkin-view-meta"></p>
+    <p class="checkin-view-note" id="checkin-view-note"></p>
+    <p class="checkin-view-user" id="checkin-view-user"></p>
+  </div>
+</div>
+
+<!-- ============ LỚP PHỦ: MODAL HƯỚNG DẪN ============ -->
+<div class="overlay" id="modal-guide" hidden>
+  <div class="modal-card modal-guide-card" role="dialog" aria-modal="true" aria-labelledby="guide-title">
+    <button type="button" class="modal-close" id="guide-close" aria-label="Đóng">✕</button>
+    <h2 id="guide-title">Hướng dẫn chơi</h2>
+    <ul class="guide-list">
+      <li>Nhấp vào từng điểm dừng đang <strong>mở khoá</strong> trên bản đồ để xem thông tin địa danh.</li>
+      <li>Đọc (hoặc bấm 🔊 Nghe) phần giới thiệu, trò chuyện cùng hướng dẫn viên AI, sau đó bấm <strong>"Bắt đầu thử thách"</strong> để trả lời 5 câu hỏi ngẫu nhiên (trắc nghiệm, đoán ảnh mờ, sắp xếp mốc thời gian).</li>
+      <li>Trả lời đúng được cộng điểm; trả lời đúng hay sai đều mở khoá điểm dừng tiếp theo.</li>
+      <li>Hoàn thành cả 10 điểm dừng để nhận huy hiệu Đồng, Bạc hoặc Vàng và trở thành <strong>Công dân số Hải Phòng xuất sắc</strong>!</li>
+      <li>Tiến trình được lưu tự động theo tài khoản Google của bạn — đăng nhập lại trên máy khác cũng không mất điểm.</li>
+    </ul>
+    <button type="button" class="btn btn-primary" id="guide-ok">Đã hiểu, bắt đầu thôi!</button>
+  </div>
+</div>
+
+<!-- ============ LỚP PHỦ: HOÀN THIỆN HỒ SƠ (LẦN ĐẦU ĐĂNG NHẬP) ============ -->
+<div class="overlay" id="modal-profile" hidden>
+  <div class="modal-card modal-profile-card" role="dialog" aria-modal="true" aria-labelledby="profile-title">
+    <h2 id="profile-title">Hoàn thiện hồ sơ</h2>
+    <p class="profile-sub">Chỉ cần điền một lần — những lần đăng nhập sau sẽ vào thẳng hành trình của bạn.</p>
+    <form id="profile-form">
+      <label class="profile-field">Họ và tên hiển thị
+        <input type="text" id="profile-name" required maxlength="60" placeholder="VD: Nguyễn Văn A">
+      </label>
+      <label class="profile-field">Lớp
+        <input type="text" id="profile-class" required maxlength="20" placeholder="VD: 7A1">
+      </label>
+      <label class="profile-field">Trường
+        <input type="text" id="profile-school" required maxlength="80" placeholder="VD: THCS Trần Phú">
+      </label>
+      <p class="profile-error" id="profile-error" hidden></p>
+      <button type="submit" class="btn btn-primary profile-submit">Bắt đầu hành trình →</button>
+    </form>
+  </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+<script type="module" src="script.js"></script>
+</body>
+</html>
